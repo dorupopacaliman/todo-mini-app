@@ -4,26 +4,10 @@ import { getUserTodos } from '../api/todos';
 import { getUser } from '../api/users';
 import PostCard from '../components/PostCard';
 import TodoItem from '../components/TodoItem';
-import { PostType, TodoType } from '../types';
-
-type UserType = {
-  id: number;
-  name: string;
-  email: string;
-  company: {
-    name: string;
-  };
-  address: {
-    street: string;
-    suite: string;
-    city: string;
-    zipcode: string;
-  };
-  website: string;
-};
+import { PostType, TodoType, UserType } from '../types';
 
 const User = () => {
-  const { user, todos, posts } = useLoaderData() as { user: UserType; todos: TodoType[]; posts: PostType[] };
+  const { user, todos, posts } = useLoaderData() as { user: UserType, todos: TodoType[], posts: PostType[] };
 
   return (
     <>

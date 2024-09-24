@@ -1,8 +1,9 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { getUsers } from '../api/users';
+import { UserType } from '../types';
 
 const UserList = () => {
-  const users = useLoaderData();
+  const users = useLoaderData() as UserType[];
 
   return (
     <>
@@ -28,7 +29,7 @@ const UserList = () => {
   );
 };
 
-const userListLoader = async ({ request: { signal } }) => {
+const userListLoader = async ({ request: { signal } }: { request: { signal: AbortSignal } }) => {
   return await getUsers({ signal });
 };
 

@@ -10,3 +10,19 @@ export type TodoType = {
   title: string;
   completed: boolean;
 }
+
+export type UserType = {
+  id: number;
+  name: string;
+  email: string;
+  company: {
+    name: string;
+  };
+  address: {
+    street: string;
+    suite: string;
+    city: string;
+    zipcode: string;
+  };
+  website: string;
+};

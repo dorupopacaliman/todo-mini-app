@@ -1,15 +1,43 @@
-import { useLoaderData } from 'react-router-dom';
+import { Form, Link, useLoaderData, useNavigation } from 'react-router-dom';
+import { useRef, useEffect } from 'react';
 import { getTodos } from '../api/todos';
-import { TodoType } from '../types';
 import TodoItem from '../components/TodoItem';
+import { TodoType } from '../types';
 
 const TodoList = () => {
-  const todos = useLoaderData() as TodoType[];
+  const { todos, query } = useLoaderData() as { todos: TodoType[]; query: string };
+  const { state } = useNavigation();
+  const queryRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (queryRef.current) {
+      queryRef.current.value = query;
+    }
+  }, [query]);
 
   return (
     <>
-      <h1 className="page-title">Todos</h1>
+      <h1 className="page-title mb-2">
+        Todos
+        <div className="title-btns">
+          <Link to="/new" className="btn">
+            New
+          </Link>
+        </div>
+      </h1>
+
+      <Form className="form">
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="query">Search</label>
+            <input type="search" id="query" name="query" ref={queryRef} />
+          </div>
+          <button className="btn">Search</button>
+        </div>
+      </Form>
+
       <ul>
+        {state === 'loading' && <div className="loading">Loading...</div>}
         {todos.map(todo => (
           <TodoItem key={todo.id} todo={todo} />
         ))}
@@ -18,8 +46,11 @@ const TodoList = () => {
   );
 };
 
-const todoListLoader = async ({ request: { signal } }: { request: { signal: AbortSignal } }) => {
-  return await getTodos({ signal });
+const todoListLoader = async ({ request: { signal, url } }: { request: { signal: AbortSignal; url: URL } }) => {
+  const searchParams = new URL(url).searchParams;
+  const query = searchParams.get('query') || '';
+
+  return await getTodos({ signal, query });
 };
 
 export const todoListRoute = {

@@ -20,7 +20,7 @@ const TodoList = () => {
       <h1 className="page-title mb-2">
         Todos
         <div className="title-btns">
-          <Link to="/new" className="btn">
+          <Link to="/todos/new" className="btn">
             New
           </Link>
         </div>

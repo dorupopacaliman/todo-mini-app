@@ -54,7 +54,7 @@ const postLoader = async ({
 }) => {
   const comments = getComments(id, { signal });
   const post = await getPost(id, { signal });
-  const user = getUser(post.userId, { signal });
+  const user = getUser(post.userId.toString(), { signal });
 
   return { post, comments: await comments, user: await user };
 };

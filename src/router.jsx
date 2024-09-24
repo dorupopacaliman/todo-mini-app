@@ -1,13 +1,13 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import RootLayout from './layouts/RootLayout';
 import Error from './pages/Error';
+import { newPostRoute } from './pages/NewPost';
+import { newTodoRoute } from './pages/NewTodo';
 import { postRoute } from './pages/Post';
 import { postListRoute } from './pages/PostList';
-import { newTodoRoute } from './pages/NewTodo';
 import { todoListRoute } from './pages/TodoList';
 import { userRoute } from './pages/User';
 import { userListRoute } from './pages/UserList';
-
 
 export const router = createBrowserRouter([
   {
@@ -19,16 +19,13 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to="posts" /> },
           {
-            path: 'new',
-            ...newTodoRoute,
-          },
-          {
             path: 'posts',
             children: [
               {
                 index: true,
                 ...postListRoute,
               },
+              { path: 'new', ...newPostRoute },
               { path: ':id', ...postRoute },
             ],
           },
@@ -44,7 +41,16 @@ export const router = createBrowserRouter([
           },
           {
             path: 'todos',
-            ...todoListRoute,
+            children: [
+              {
+                index: true,
+                ...todoListRoute,
+              },
+              {
+                path: 'new',
+                ...newTodoRoute,
+              },
+            ],
           },
           { path: '*', element: <h1>404 - Page not found</h1> },
         ],

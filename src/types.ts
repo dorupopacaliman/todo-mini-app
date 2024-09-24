@@ -26,3 +26,9 @@ export type UserType = {
   };
   website: string;
 };
+
+export type PostFormType = {
+  title: FormDataEntryValue | null;
+  userId: FormDataEntryValue | null;
+  body: FormDataEntryValue | null;
+};

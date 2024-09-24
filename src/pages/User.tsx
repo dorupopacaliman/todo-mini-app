@@ -4,7 +4,7 @@ import { getUserTodos } from '../api/todos';
 import { getUser } from '../api/users';
 import PostCard from '../components/PostCard';
 import TodoItem from '../components/TodoItem';
-import { TodoType, PostType } from '../types';
+import { PostType, TodoType } from '../types';
 
 type UserType = {
   id: number;
@@ -20,10 +20,10 @@ type UserType = {
     zipcode: string;
   };
   website: string;
-}
+};
 
 const User = () => {
-  const { user, todos, posts } = useLoaderData() as { user: UserType, todos: TodoType[], posts: PostType[] };
+  const { user, todos, posts } = useLoaderData() as { user: UserType; todos: TodoType[]; posts: PostType[] };
 
   return (
     <>
@@ -54,7 +54,13 @@ const User = () => {
   );
 };
 
-const userLoader = async ({ params, request: { signal } }: { params: { id: string }, request: { signal: AbortSignal } }) => {
+const userLoader = async ({
+  params,
+  request: { signal },
+}: {
+  params: { id: string };
+  request: { signal: AbortSignal };
+}) => {
   const [user, todos, posts] = await Promise.all([
     getUser(params.id, { signal }),
     getUserTodos(params.id, { signal }),

@@ -1,6 +1,6 @@
 import { Form, Link, redirect, useActionData, useNavigation } from 'react-router-dom';
 import { addTodo } from '../api/todos';
-
+import FormGroup from '../components/FormGroup';
 const NewTodo = () => {
   const actionData = useActionData() as string | undefined;
 
@@ -11,14 +11,10 @@ const NewTodo = () => {
     <>
       <h1 className="page-title">New Todo</h1>
       <Form className="form" method="post">
-        {actionData && <div>{actionData}</div>}
         <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="title">Title</label>
+          <FormGroup label="Title" error={actionData}>
             <input type="text" id="title" name="title" />
-          </div>
-        </div>
-        <div className="form-btn-row form-row">
+          </FormGroup>
           <Link to=".." className="btn btn-outline">
             Back
           </Link>

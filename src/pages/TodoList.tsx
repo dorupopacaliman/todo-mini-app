@@ -1,6 +1,7 @@
+import { useEffect, useRef } from 'react';
 import { Form, Link, useLoaderData, useNavigation } from 'react-router-dom';
-import { useRef, useEffect } from 'react';
 import { getTodos } from '../api/todos';
+import FormGroup from '../components/FormGroup';
 import TodoItem from '../components/TodoItem';
 import { TodoType } from '../types';
 
@@ -28,10 +29,9 @@ const TodoList = () => {
 
       <Form className="form">
         <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="query">Search</label>
+          <FormGroup label="Search">
             <input type="search" id="query" name="query" ref={queryRef} />
-          </div>
+          </FormGroup>
           <button className="btn">Search</button>
         </div>
       </Form>

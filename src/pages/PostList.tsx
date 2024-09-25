@@ -1,11 +1,53 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { Form, Link, useLoaderData, useSubmit } from 'react-router-dom';
+import FormGroup from '../components/FormGroup';
 import { getPosts } from '../api/posts';
 import { getUsers } from '../api/users';
 import PostCard from '../components/PostCard';
 import { PostType, UserType } from '../types';
 
 const PostList = () => {
-  const { posts, users } = useLoaderData() as { posts: PostType[]; users: UserType[] };
+  const {
+    posts,
+    users,
+    searchParams: { query, userId },
+  } = useLoaderData() as {
+    posts: PostType[];
+    users: UserType[];
+    searchParams: { query: string; userId: string };
+  };
+  const submit = useSubmit();
+
+  const queryRef = useRef<HTMLInputElement>(null);
+  const userIdRef = useRef<HTMLSelectElement>(null);
+
+  useEffect(() => {
+    if (queryRef.current) {
+      queryRef.current.value = query;
+    }
+  }, [query]);
+
+  useEffect(() => {
+    if (userIdRef.current) {
+      userIdRef.current.value = userId;
+    }
+  }, [userId]);
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const queryValue = formData.get('query') as string;
+    const userIdValue = formData.get('userId') as string;
+
+    if (!queryValue) {
+      formData.delete('query');
+    }
+    if (!userIdValue) {
+      formData.delete('userId');
+    }
+
+    submit(formData, { method: 'get' });
+  };
 
   return (
     <>
@@ -18,15 +60,13 @@ const PostList = () => {
         </div>
       </h1>
 
-      <form method="get" action="/posts" className="form mb-4">
+      <Form method="get" className="form mb-4" onSubmit={onSubmit}>
         <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="query">Query</label>
-            <input type="search" name="query" id="query" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="userId">Author</label>
-            <select name="userId" id="userId">
+          <FormGroup label="Query">
+            <input type="search" name="query" id="query" ref={queryRef} />
+          </FormGroup>
+          <FormGroup label="Author">
+            <select name="userId" id="userId" ref={userIdRef}>
               <option value="">Any</option>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
@@ -34,10 +74,10 @@ const PostList = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </FormGroup>
           <button className="btn">Filter</button>
         </div>
-      </form>
+      </Form>
 
       <div className="card-grid">
         {posts.map(post => (
@@ -48,15 +88,21 @@ const PostList = () => {
   );
 };
 
-const postListLoader = async ({ request: { signal } }: { request: { signal: AbortSignal } }) => {
-  const [posts, users] = await Promise.all([getPosts({ signal }), getUsers({ signal })]);
+const loader = async ({ request: { signal, url } }: { request: { signal: AbortSignal; url: URL } }) => {
+  const searchParams = new URL(url).searchParams;
 
-  const postsUserIds = posts.map(post => post.userId);
-  const usersWithPosts = users.filter(user => postsUserIds.includes(user.id));
-  return { posts, users: usersWithPosts };
+  const query = searchParams.get('query');
+  const userId = searchParams.get('userId');
+
+  const filterParams = { q: query, userId };
+
+  const posts = getPosts({ signal, params: filterParams });
+  const users = getUsers({ signal });
+
+  return { posts: await posts, users: await users, searchParams: { query, userId } };
 };
 
 export const postListRoute = {
   element: <PostList />,
-  loader: postListLoader,
+  loader: loader,
 };

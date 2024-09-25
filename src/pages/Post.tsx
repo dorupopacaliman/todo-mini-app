@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link, NavLink, useLoaderData } from 'react-router-dom';
 import { getComments } from '../api/comments';
 import { getPost } from '../api/posts';
 import { getUser } from '../api/users';
@@ -25,7 +25,14 @@ const Post = () => {
 
   return (
     <>
-      <h1 className="page-title">{post.title}</h1>
+      <h1 className="page-title">
+        {post.title}
+        <div className="title-btns">
+          <NavLink className="btn btn-outline" to={`/posts/${post.id}/edit`}>
+            Edit
+          </NavLink>
+        </div>
+      </h1>
       <span className="page-subtitle">
         By: <Link to={`/users/${user.id}`}>{user.name}</Link>
       </span>

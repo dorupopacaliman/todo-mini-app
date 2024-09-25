@@ -1,7 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import RootLayout from './layouts/RootLayout';
 import Error from './pages/Error';
-import { newPostRoute } from './pages/NewPost';
+import { newPostRouter } from './pages/NewPost';
+import { editPostRouter } from './pages/EditPost';
 import { newTodoRoute } from './pages/NewTodo';
 import { postRoute } from './pages/Post';
 import { postListRoute } from './pages/PostList';
@@ -25,8 +26,14 @@ export const router = createBrowserRouter([
                 index: true,
                 ...postListRoute,
               },
-              { path: 'new', ...newPostRoute },
-              { path: ':id', ...postRoute },
+              { path: 'new', ...newPostRouter },
+              {
+                path: ':id',
+                children: [
+                  { index: true, ...postRoute },
+                  { path: 'edit', ...editPostRouter },
+                ],
+              },
             ],
           },
           {

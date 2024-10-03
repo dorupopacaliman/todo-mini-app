@@ -1,8 +1,12 @@
-import { defineConfig } from 'vite';
+/// <reference types="vitest/config" />
 import react from '@vitejs/plugin-react-swc';
-import checker from 'vite-plugin-checker';
+import { defineConfig } from 'vite';
+
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), checker({
-    typescript: true,
-  })],
+  plugins: [react()],
+  test: {
+    environment: 'jsdom',
+    setupFiles: './src/test/setupTests.ts',
+  },
 });

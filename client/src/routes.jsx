@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import RootLayout from './layouts/RootLayout';
 import Error from './pages/Error';
 import { newPostRouter } from './pages/NewPost';
@@ -10,7 +10,7 @@ import { todoListRoute } from './pages/TodoList';
 import { userRoute } from './pages/User';
 import { userListRoute } from './pages/UserList';
 
-export const router = createBrowserRouter([
+export const routes = [
   {
     path: '/',
     element: <RootLayout />,
@@ -64,4 +64,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-]);
+];

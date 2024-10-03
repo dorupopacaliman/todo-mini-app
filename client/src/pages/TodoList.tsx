@@ -46,7 +46,7 @@ const TodoList = () => {
   );
 };
 
-const todoListLoader = async ({ request: { signal, url } }: { request: { signal: AbortSignal; url: URL } }) => {
+const todoListLoader = async ({ request: { signal, url } }: { request: { signal: AbortSignal; url: string } }) => {
   const searchParams = new URL(url).searchParams;
   const query = searchParams.get('query') || '';
 

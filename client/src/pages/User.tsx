@@ -42,9 +42,13 @@ const userLoader = async ({
   params,
   request: { signal },
 }: {
-  params: { id: string };
+  params: { id?: string };
   request: { signal: AbortSignal };
 }) => {
+  if (!params.id) {
+    throw new Response('Not Found', { status: 404 });
+  }
+
   const [user, todos, posts] = await Promise.all([
     getUser(params.id, { signal }),
     getUserTodos(params.id, { signal }),

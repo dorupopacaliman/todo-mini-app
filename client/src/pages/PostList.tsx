@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Form, Link, useLoaderData, useSubmit } from 'react-router-dom';
-import FormGroup from '../components/FormGroup';
 import { getPosts } from '../api/posts';
 import { getUsers } from '../api/users';
+import FormGroup from '../components/FormGroup';
 import PostCard from '../components/PostCard';
 import { PostType, UserType } from '../types';
 
@@ -23,13 +23,13 @@ const PostList = () => {
 
   useEffect(() => {
     if (queryRef.current) {
-      queryRef.current.value = query;
+      queryRef.current.value = query ?? '';
     }
   }, [query]);
 
   useEffect(() => {
     if (userIdRef.current) {
-      userIdRef.current.value = userId;
+      userIdRef.current.value = userId ?? '';
     }
   }, [userId]);
 
@@ -50,7 +50,7 @@ const PostList = () => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <h1 className="page-title">
         Posts
         <div className="title-btns">
@@ -62,10 +62,10 @@ const PostList = () => {
 
       <Form method="get" className="form mb-4" onSubmit={onSubmit}>
         <div className="form-row">
-          <FormGroup label="Query">
+          <FormGroup label="Query" htmlFor="query">
             <input type="search" name="query" id="query" ref={queryRef} />
           </FormGroup>
-          <FormGroup label="Author">
+          <FormGroup label="Author" htmlFor="userId">
             <select name="userId" id="userId" ref={userIdRef}>
               <option value="">Any</option>
               {users.map(user => (
@@ -84,11 +84,11 @@ const PostList = () => {
           <PostCard key={post.id} post={post} />
         ))}
       </div>
-    </>
+    </React.Fragment>
   );
 };
 
-const loader = async ({ request: { signal, url } }: { request: { signal: AbortSignal; url: URL } }) => {
+const loader = async ({ request: { signal, url } }: { request: { signal: AbortSignal; url: string } }) => {
   const searchParams = new URL(url).searchParams;
 
   const query = searchParams.get('query');

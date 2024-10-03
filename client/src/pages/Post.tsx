@@ -56,9 +56,13 @@ const postLoader = async ({
   params: { id },
   request: { signal },
 }: {
-  params: { id: string };
+  params: { id?: string };
   request: { signal: AbortSignal };
 }) => {
+  if (!id) {
+    throw new Response('Not Found', { status: 404 });
+  }
+
   const comments = getComments(id, { signal });
   const post = await getPost(id, { signal });
   const user = getUser(post.userId.toString(), { signal });

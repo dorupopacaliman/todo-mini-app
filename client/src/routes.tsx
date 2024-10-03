@@ -1,8 +1,8 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, RouteObject } from 'react-router-dom';
 import RootLayout from './layouts/RootLayout';
+import { editPostRouter } from './pages/EditPost';
 import Error from './pages/Error';
 import { newPostRouter } from './pages/NewPost';
-import { editPostRouter } from './pages/EditPost';
 import { newTodoRoute } from './pages/NewTodo';
 import { postRoute } from './pages/Post';
 import { postListRoute } from './pages/PostList';
@@ -10,7 +10,7 @@ import { todoListRoute } from './pages/TodoList';
 import { userRoute } from './pages/User';
 import { userListRoute } from './pages/UserList';
 
-export const routes = [
+export const routes: RouteObject[] = [
   {
     path: '/',
     element: <RootLayout />,
@@ -30,7 +30,11 @@ export const routes = [
               {
                 path: ':id',
                 children: [
-                  { index: true, ...postRoute },
+                  {
+                    index: true,
+                    ...postRoute,
+                  },
+
                   { path: 'edit', ...editPostRouter },
                 ],
               },

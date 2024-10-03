@@ -1,11 +1,9 @@
 import { redirect, useLoaderData } from 'react-router-dom';
-import { updatePost } from '../api/posts';
-import { postFormValidator } from '../helpers/postFormValidator';
+import { getPost, updatePost } from '../api/posts';
 import { getUsers } from '../api/users';
-import { UserType, PostType } from '../types';
-import { getPost } from '../api/posts';
 import PostForm from '../components/PostForm';
-
+import { postFormValidator } from '../helpers/postFormValidator';
+import { PostType, UserType } from '../types';
 
 const EditPost = () => {
   const { users, post } = useLoaderData() as { users: UserType[]; post: PostType };
@@ -18,14 +16,28 @@ const EditPost = () => {
   );
 };
 
-const loader = async ({ params, request: { signal } }: { params: { id: string }; request: { signal: AbortSignal } }) => {
+const loader = async ({
+  params,
+  request: { signal },
+}: {
+  params: { id?: string };
+  request: { signal: AbortSignal };
+}) => {
+  if (!params.id) {
+    throw new Response('Not Found', { status: 404 });
+  }
+
   const users = await getUsers({ signal });
   const post = await getPost(params.id, { signal });
 
   return { users, post };
 };
 
-const action = async ({ request, params }: { request: Request, params: { id: string } }) => {
+const action = async ({ request, params }: { request: Request; params: { id?: string } }) => {
+  if (!params.id) {
+    throw new Response('Not Found', { status: 404 });
+  }
+
   const formData = await request.formData();
   const title = formData.get('title');
   const userId = formData.get('userId');

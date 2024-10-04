@@ -12,7 +12,7 @@ const NewTodo = () => {
       <h1 className="page-title">New Todo</h1>
       <Form className="form" method="post">
         <div className="form-row">
-          <FormGroup label="Title" error={actionData}>
+          <FormGroup label="Title" error={actionData} htmlFor="title">
             <input type="text" id="title" name="title" />
           </FormGroup>
           <Link to=".." className="btn btn-outline">

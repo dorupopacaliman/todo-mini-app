@@ -11,10 +11,10 @@ const PostForm = ({ users, post }: { users: UserType[]; post?: PostType }) => {
   return (
     <Form method="post" className="form">
       <div className="form-row">
-        <FormGroup label="Title" error={actionData?.title}>
+        <FormGroup label="Title" error={actionData?.title} htmlFor="title">
           <input type="text" name="title" id="title" defaultValue={post?.title} />
         </FormGroup>
-        <FormGroup label="Author">
+        <FormGroup label="Author" htmlFor="userId">
           <select name="userId" id="userId" defaultValue={post?.userId}>
             {users.map(user => (
               <option key={user.id} value={user.id}>
@@ -25,7 +25,7 @@ const PostForm = ({ users, post }: { users: UserType[]; post?: PostType }) => {
         </FormGroup>
       </div>
       <div className="form-row">
-        <FormGroup label="Body" error={actionData?.body}>
+        <FormGroup label="Body" error={actionData?.body} htmlFor="body">
           <textarea name="body" id="body" defaultValue={post?.body} />
         </FormGroup>
       </div>

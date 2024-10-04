@@ -29,7 +29,7 @@ const TodoList = () => {
 
       <Form className="form">
         <div className="form-row">
-          <FormGroup label="Search">
+          <FormGroup label="Search" htmlFor="query">
             <input type="search" id="query" name="query" ref={queryRef} />
           </FormGroup>
           <button className="btn">Search</button>

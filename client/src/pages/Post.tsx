@@ -1,52 +1,87 @@
-import { Link, NavLink, useLoaderData } from 'react-router-dom';
+import { Suspense } from 'react';
+import { Await, defer, Link, NavLink, useLoaderData } from 'react-router-dom';
 import { getComments } from '../api/comments';
 import { getPost } from '../api/posts';
 import { getUser } from '../api/users';
-import { PostType } from '../types';
-interface Comment {
+import { SimpleSkeletonText, Skeleton, SkeletonList } from '../components/Skeleton';
+import { PostType, UserType } from '../types';
+
+type Comment = {
   id: number;
   email: string;
   body: string;
-}
+};
 
-interface User {
+type User = {
   id: number;
   name: string;
-}
-
-interface LoaderData {
-  post: PostType;
-  comments: Comment[];
-  user: User;
-}
+};
 
 const Post = () => {
-  const { post, comments, user } = useLoaderData() as LoaderData;
+  const { postPromise, commentsPromise, userPromise } = useLoaderData() as {
+    postPromise: Promise<PostType>;
+    commentsPromise: Promise<Comment[]>;
+    userPromise: Promise<User>;
+  };
 
   return (
     <>
       <h1 className="page-title">
-        {post.title}
+        <SimpleSkeletonText resolve={postPromise}>{post => post.title}</SimpleSkeletonText>
         <div className="title-btns">
-          <NavLink className="btn btn-outline" to={`/posts/${post.id}/edit`}>
+          <NavLink className="btn btn-outline" to="edit">
             Edit
           </NavLink>
         </div>
       </h1>
       <span className="page-subtitle">
-        By: <Link to={`/users/${user.id}`}>{user.name}</Link>
+        By:{' '}
+        <Suspense fallback={<Skeleton short inline />}>
+          <Await resolve={userPromise}>{(user: UserType) => <Link to={`/users/${user.id}`}>{user.name}</Link>}</Await>
+        </Suspense>
       </span>
-      <div>{post.body}</div>
+      <Suspense
+        fallback={
+          <>
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+          </>
+        }
+      >
+        <Await resolve={postPromise}>{(post: PostType) => <div>{post.body}</div>}</Await>
+      </Suspense>
       <h3 className="mt-4 mb-2">Comments</h3>
       <div className="card-stack">
-        {comments.map(comment => (
-          <div className="card" key={comment.id}>
-            <div className="card-body">
-              <div className="text-sm mb-1">{comment.email}</div>
-              {comment.body}
-            </div>
-          </div>
-        ))}
+        <Suspense
+          fallback={
+            <SkeletonList length={5}>
+              <div className="card">
+                <div className="card-body">
+                  <div className="text-sm mb-1">
+                    <Skeleton short />
+                  </div>
+                  <Skeleton />
+                  <Skeleton />
+                </div>
+              </div>
+            </SkeletonList>
+          }
+        >
+          <Await resolve={commentsPromise}>
+            {(comments: Comment[]) =>
+              comments.map(comment => (
+                <div className="card" key={comment.id}>
+                  <div className="card-body">
+                    <div className="text-sm mb-1">{comment.email}</div>
+                    {comment.body}
+                  </div>
+                </div>
+              ))
+            }
+          </Await>
+        </Suspense>
       </div>
     </>
   );
@@ -64,10 +99,13 @@ const postLoader = async ({
   }
 
   const comments = getComments(id, { signal });
-  const post = await getPost(id, { signal });
-  const user = getUser(post.userId.toString(), { signal });
+  const post = getPost(id, { signal });
 
-  return { post, comments: await comments, user: await user };
+  return defer({
+    postPromise: post,
+    commentsPromise: comments,
+    userPromise: post.then(post => getUser(post.userId.toString(), { signal })),
+  });
 };
 
 export const postRoute = {

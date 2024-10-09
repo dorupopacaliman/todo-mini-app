@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HttpResponse } from 'msw';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -59,15 +59,17 @@ describe('PostList component', () => {
     await user.type(queryInput, 'first');
     await user.click(filterBtn);
 
+    await waitFor(() => expect(screen.queryByText('Loading...')).not.toBeInTheDocument());
     expect(screen.getByText('first post')).toBeInTheDocument();
     expect(screen.queryByText('second post')).not.toBeInTheDocument();
     expect(queryInput).toHaveValue('first');
-
+    
     const userInput = screen.getByLabelText('Author');
     await user.selectOptions(userInput, 'second user');
     await user.clear(queryInput);
     await user.click(filterBtn);
-
+    
+    await waitFor(() => expect(screen.queryByText('Loading...')).not.toBeInTheDocument());
     expect(screen.queryByText('first post')).not.toBeInTheDocument();
     expect(screen.getByText('second post')).toBeInTheDocument();
     expect(userInput).toHaveValue('2');

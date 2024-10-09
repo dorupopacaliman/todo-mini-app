@@ -1,4 +1,4 @@
-import { redirect, useLoaderData } from 'react-router-dom';
+import { defer, redirect, useLoaderData } from 'react-router-dom';
 import { getPost, updatePost } from '../api/posts';
 import { getUsers } from '../api/users';
 import PostForm from '../components/PostForm';
@@ -6,12 +6,12 @@ import { postFormValidator } from '../helpers/postFormValidator';
 import { PostType, UserType } from '../types';
 
 const EditPost = () => {
-  const { users, post } = useLoaderData() as { users: UserType[]; post: PostType };
+  const { usersPromise, postPromise } = useLoaderData() as { usersPromise: Promise<UserType[]>; postPromise: Promise<PostType> };
 
   return (
     <>
       <h1 className="page-title">Edit Post</h1>
-      <PostForm users={users} post={post} />
+      <PostForm usersPromise={usersPromise} postPromise={postPromise} />
     </>
   );
 };
@@ -27,10 +27,10 @@ const loader = async ({
     throw new Response('Not Found', { status: 404 });
   }
 
-  const users = await getUsers({ signal });
-  const post = await getPost(params.id, { signal });
+  const users = getUsers({ signal });
+  const post = getPost(params.id, { signal });
 
-  return { users, post };
+  return defer({ usersPromise: users, postPromise: post });
 };
 
 const action = async ({ request, params }: { request: Request; params: { id?: string } }) => {

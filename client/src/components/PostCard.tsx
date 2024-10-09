@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Skeleton, SkeletonButton } from './Skeleton';
 
 interface Post {
   id: number;
@@ -8,7 +9,7 @@ interface Post {
 
 const PostCard = ({ post }: { post: Post }) => {
   return (
-    <div className="card" key={post.id}>
+    <div className="card">
       <div className="card-header">{post.title}</div>
       <div className="card-body">
         <div className="card-preview-text">{post.body}</div>
@@ -23,3 +24,24 @@ const PostCard = ({ post }: { post: Post }) => {
 };
 
 export default PostCard;
+
+export const SkeletonPostCard = () => {
+  return (
+    <div className="card">
+      <div className="card-header">
+        <Skeleton short />
+      </div>
+      <div className="card-body">
+        <div className="card-preview-text">
+          <Skeleton short />
+          <Skeleton short />
+          <Skeleton short />
+          <Skeleton short />
+        </div>
+      </div>
+      <div className="card-footer">
+        <SkeletonButton />
+      </div>
+    </div>
+  );
+};
